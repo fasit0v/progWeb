@@ -1,5 +1,17 @@
+"use client"
+import { useAuthContext } from "@/context/authContext"
 import LoginForm from "../components/loginForm/loginForm"
+import { useRouter } from "next/navigation"
 function HomePage() {
+
+	const {user} = useAuthContext()
+
+	const router = useRouter()
+	if (user) {
+		router.push("/dashboard")
+	}
+	
+
 	return (
 	  <section>
 		<div>

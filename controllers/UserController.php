@@ -52,10 +52,10 @@ class UserController
             $user->setNameUser($datos->nameUser);
             $user->setPasswordUser($datos->passwordUser);
 
-            $this->userService->signIn($user);
+            $user = $this->userService->signIn($user);
 
             http_response_code(200);
-            echo json_encode(["msg" => "Se ha iniciado sesión correctamente"]);
+            echo json_encode(["msg" => "Se ha iniciado sesión correctamente", "data" => ["nameUser" => $user->getNameUser(), "idUser" => $user->getIdUser()]]);
 
         } catch (Exception $exception) {
             http_response_code($exception->getCode());

@@ -52,7 +52,7 @@ class UserService
         $this->userRepository->post($user);
     }
 
-    public function signIn(User $user): void
+    public function signIn(User $user)
     {
         if (!strlen($user->getPasswordUser()) || !strlen($user->getNameUser())) {
             throw new Exception("Error crendenciales vacías", 400);
@@ -60,6 +60,7 @@ class UserService
 
         $user = $this->userRepository->signIn($user);
         $this->createCookieWithJwt($user);
+        return $user;
     }
 
 

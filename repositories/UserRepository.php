@@ -37,7 +37,7 @@ class UserRepository extends Repository
         $smtm->bind_param("s", $nameUser);
         if (!$smtm->execute()) {
             $this->con->close();
-            throw new Exception("Error al iniciar Sesion el usuario", 400);
+            throw new Exception("Error al iniciar Sesión el usuario", 400);
         }
 
         $result = $smtm->get_result();
