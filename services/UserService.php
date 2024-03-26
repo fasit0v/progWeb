@@ -22,15 +22,15 @@ class UserService
         $time = time();
         $payload = [
             "iat" => $time,
-            "exp" => $time + (60 * 60 * 24),
+            "exp" => $time + (60 * 60),
             "data" => [
-                "idUser" => $user->getIdUser(),
+                "User" => $user->getIdUser(),
                 "nameUser" => $user->getNameUser()
             ]
         ];
 
         $cookiesConfiguration = [
-            'expires' => (time() + (60 * 60 * 24)),
+            'expires' => (time() + (60 * 60)),
             'path' => '/',
             'domain' => '', // leading dot for compatibility or use subdomain
             'secure' => true,     // or false
@@ -43,30 +43,23 @@ class UserService
         setcookie('token', $token, $cookiesConfiguration);
     }
 
+
     public function post(User $user): void
     {
+        if (!strlen($user->getPasswordUser()) || !strlen($user->getNameUser()) || !strlen($user->getEmailUser())) {
+            throw new Exception("Error crendenciales vacías", 400);
+        }
         $this->userRepository->post($user);
-    }
-
-    public function get(User $user): void
-    {
-        $this->userRepository->get($user);
     }
 
     public function signIn(User $user): void
     {
-
         if (!strlen($user->getPasswordUser()) || !strlen($user->getNameUser())) {
             throw new Exception("Error crendenciales vacías", 400);
-
         }
+
         $user = $this->userRepository->signIn($user);
         $this->createCookieWithJwt($user);
-
-        http_response_code(200);
-        echo json_encode(["msg" => "Se ha iniciado sesión correctamente"]);
-
-
     }
 
 

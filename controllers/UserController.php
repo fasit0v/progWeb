@@ -16,25 +16,29 @@ class UserController
 
     public function post()
     {
-        $datos = json_decode(file_get_contents("php://input"));
+        try {
+            $datos = json_decode(file_get_contents("php://input"));
 
-        $user = new User();
-        $user->setNameUser($datos->nameUser);
-        $user->setEmailUser($datos->emailUser);
-        $user->setPasswordUser($datos->passwordUser);
+            if (!isset($datos->nameUser, $datos->passwordUser, $datos->emailUser)) {
+                throw new Exception("Error faltan crendenciales", 400);
+            }
 
-        $this->userService->post($user);
+            $user = new User();
+            $user->setNameUser($datos->nameUser);
+            $user->setEmailUser($datos->emailUser);
+            $user->setPasswordUser($datos->passwordUser);
+
+            $this->userService->post($user);
+
+            http_response_code(200);
+            echo json_encode(["msg" => "Se ha creado el usuario correctamente"]);
+
+        } catch (Exception $exception) {
+            http_response_code($exception->getCode());
+            echo json_encode(["msg" => $exception->getMessage()]);
+        }
     }
 
-    public function get()
-    {
-        $idUser = $_GET["idUser"];
-
-        $user = new User();
-        $user->setIdUser($idUser);
-
-        $this->userService->get($user);
-    }
 
     public function signIn()
     {
@@ -42,7 +46,6 @@ class UserController
             $datos = json_decode(file_get_contents("php://input"));
             if (!isset($datos->nameUser, $datos->passwordUser)) {
                 throw new Exception("Error faltan crendenciales", 400);
-
             }
 
             $user = new User();
@@ -50,6 +53,9 @@ class UserController
             $user->setPasswordUser($datos->passwordUser);
 
             $this->userService->signIn($user);
+
+            http_response_code(200);
+            echo json_encode(["msg" => "Se ha iniciado sesión correctamente"]);
 
         } catch (Exception $exception) {
             http_response_code($exception->getCode());
