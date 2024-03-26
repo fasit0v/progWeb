@@ -17,8 +17,8 @@ class UserController
     public function post()
     {
         $datos = json_decode(file_get_contents("php://input"));
-        $user = new User();
 
+        $user = new User();
         $user->setNameUser($datos->nameUser);
         $user->setEmailUser($datos->emailUser);
         $user->setPasswordUser($datos->passwordUser);
@@ -29,8 +29,8 @@ class UserController
     public function get()
     {
         $idUser = $_GET["idUser"];
-        $user = new User();
 
+        $user = new User();
         $user->setIdUser($idUser);
 
         $this->userService->get($user);
@@ -38,13 +38,23 @@ class UserController
 
     public function signIn()
     {
-        $datos = json_decode(file_get_contents("php://input"));
-        $user = new User();
+        try {
+            $datos = json_decode(file_get_contents("php://input"));
+            if (!isset($datos->nameUser, $datos->passwordUser)) {
+                throw new Exception("Error faltan crendenciales", 400);
 
-        $user->setNameUser($datos->nameUser);
-        $user->setPasswordUser($datos->passwordUser);
+            }
 
-        $this->userService->signIn($user);
+            $user = new User();
+            $user->setNameUser($datos->nameUser);
+            $user->setPasswordUser($datos->passwordUser);
+
+            $this->userService->signIn($user);
+
+        } catch (Exception $exception) {
+            http_response_code($exception->getCode());
+            echo json_encode(["msg" => $exception->getMessage()]);
+        }
     }
 }
 

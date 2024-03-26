@@ -1,5 +1,10 @@
 <?php
 
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+
+require_once "../vendor/autoload.php";
+
 include_once "../models/User.php";
 include_once "../repositories/UserRepository.php";
 
@@ -10,6 +15,32 @@ class UserService
     public function __construct(UserRepository $userRepository)
     {
         $this->userRepository = $userRepository;
+    }
+
+    private function createCookieWithJwt(User $user)
+    {
+        $time = time();
+        $payload = [
+            "iat" => $time,
+            "exp" => $time + (60 * 60 * 24),
+            "data" => [
+                "idUser" => $user->getIdUser(),
+                "nameUser" => $user->getNameUser()
+            ]
+        ];
+
+        $cookiesConfiguration = [
+            'expires' => (time() + (60 * 60 * 24)),
+            'path' => '/',
+            'domain' => '', // leading dot for compatibility or use subdomain
+            'secure' => true,     // or false
+            'httponly' => true,    // or false
+            'samesite' => 'None' // None || Lax  || Strict
+        ];
+
+        $token = JWT::encode($payload, "SECRET_JWT", "HS256");
+
+        setcookie('token', $token, $cookiesConfiguration);
     }
 
     public function post(User $user): void
@@ -24,7 +55,18 @@ class UserService
 
     public function signIn(User $user): void
     {
-        $this->userRepository->signIn($user);
+
+        if (!strlen($user->getPasswordUser()) || !strlen($user->getNameUser())) {
+            throw new Exception("Error crendenciales vacías", 400);
+
+        }
+        $user = $this->userRepository->signIn($user);
+        $this->createCookieWithJwt($user);
+
+        http_response_code(200);
+        echo json_encode(["msg" => "Se ha iniciado sesión correctamente"]);
+
+
     }
 
 
