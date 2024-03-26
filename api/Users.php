@@ -5,4 +5,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
     case "POST":
         $userController->post();
         break;
+    case "GET":
+        $userController->get();
+        break;
 }

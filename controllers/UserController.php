@@ -26,6 +26,16 @@ class UserController
         $this->userService->post($user);
     }
 
+    public function get()
+    {
+        $idUser = $_GET["idUser"];
+        $user = new User();
+
+        $user->setIdUser($idUser);
+
+        $this->userService->get($user);
+    }
+
     public function signIn()
     {
         $datos = json_decode(file_get_contents("php://input"));

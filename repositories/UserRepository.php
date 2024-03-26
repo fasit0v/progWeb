@@ -34,6 +34,39 @@ class UserRepository extends Repository
         }
     }
 
+    public function get(User $user): void
+    {
+        $query = "SELECT idUser, nameUser, emailUser FROM user WHERE idUser = ?";
+        $smtm = $this->con->prepare($query);
+
+        try {
+            $idUser = $user->getIdUser();
+
+            $smtm->bind_param("i", $idUser);
+            if (!$smtm->execute()) {
+                throw new Exception("Error al obtener usuario", 400);
+            }
+
+            $result = $smtm->get_result();
+
+            if ($result->num_rows == 0) {
+                throw new Exception("Error no existe el usuario", 404);
+            }
+
+            $user = $result->fetch_object();
+
+            echo json_encode(["data" => ["idUser" => $user->idUser, "nameUser" => $user->nameUser, "emailUser" => $user->emailUser], "msg" => "Se ha obtenido la información del usuario"]);
+            http_response_code(200);
+
+        } catch (Exception $exception) {
+            http_response_code($exception->getCode());
+            echo json_encode(["msg" => $exception->getMessage()]);
+
+        } finally {
+            $this->con->close();
+        }
+    }
+
     public function signIn(User $user): void
     {
         $query = "SELECT idUser, nameUser, passwordUser, emailUser FROM user WHERE nameUser = ?";
@@ -71,4 +104,8 @@ class UserRepository extends Repository
         }
     }
 
+    public function register(User $user): void
+    {
+
+    }
 }

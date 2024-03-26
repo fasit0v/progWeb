@@ -17,9 +17,15 @@ class UserService
         $this->userRepository->post($user);
     }
 
+    public function get(User $user): void
+    {
+        $this->userRepository->get($user);
+    }
+
     public function signIn(User $user): void
     {
         $this->userRepository->signIn($user);
     }
+
 
 }
