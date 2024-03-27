@@ -1,11 +1,11 @@
-import { ResponseApi, UserCredentidials } from './../interfaces/user.d';
+import { ResponseApi, UserCredentidials } from '../interfaces/user';
 
 
 const URL = process.env.API_URL;
 
-export function signIn(userCredentials: UserCredentidials) {
+export function registerUser(userCredentials: UserCredentidials) {
 
-	fetch("http://localhost/progWeb/api/SignIn.php", {
+	fetch("http://localhost/progWeb/api/User.php", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
