@@ -72,9 +72,9 @@ function AuthContextProvider({ children }: {children: React.ReactNode}) {
 		() => ({
 			user,
 			iniciarSesion,
-			
+			cerrarSesion,
 		}),
-		[user, iniciarSesion]
+		[user, iniciarSesion, cerrarSesion]
 	);
 
 	return <authContext.Provider value={values}>{children}</authContext.Provider>;
